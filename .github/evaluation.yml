@@ -1,0 +1,63 @@
+name: Comprehensive Evaluation
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * *"   # 9:00 AM Arizona time
+    - cron: "0 4 * * *"    # 9:00 PM Arizona time
+  push:
+    branches:
+      - main
+ 
+permissions:
+  contents: read
+ 
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    env:
+      GENAI_EVALS_CONFIG_PATH: ${{ github.workspace }}/evaluate-config.json
+      GENAI_EVALS_DATA_PATH: ${{ github.workspace }}/data/comprehensive_evaluation/eval-input.jsonl
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+      - name: Write evaluate config
+        run: |
+          cat > ${{ env.GENAI_EVALS_CONFIG_PATH }} <<EOF
+          {
+            "data": "${{ env.GENAI_EVALS_DATA_PATH }}",
+            "evaluators": {
+              "bleu_score": "BleuScoreEvaluator",
+              "coherence": "CoherenceEvaluator",
+              "f1_score": "F1ScoreEvaluator",
+              "fluency": "FluencyEvaluator",
+              "gleu_score": "GleuScoreEvaluator",
+              "groundedness": "GroundednessEvaluator",
+              "meteor_score": "MeteorScoreEvaluator",
+              "qa": "QAEvaluator",
+              "relevance": "RelevanceEvaluator",
+              "retrieval": "RetrievalEvaluator",
+              "rouge_score": "RougeScoreEvaluator",
+              "similarity": "SimilarityEvaluator"
+            },
+            "ai_model_configuration": {
+              "type": "azure_openai",
+              "azure_endpoint": "${{ secrets.AZURE_OPENAI_ENDPOINT }}",
+              "azure_deployment": "${{ secrets.AZURE_OPENAI_DEPLOYMENT_NAME }}",
+              "api_key": "${{ secrets.AZURE_OPENAI_API_KEY }}",
+              "api_version": "${{ secrets.AZURE_OPENAI_API_VERSION }}"
+            }
+          }
+          EOF
+      - name: Run AI Evaluation
+        id: run-ai-evaluation
+        uses: microsoft/genai-evals@main
+        with:
+          evaluate-configuration: ${{ env.GENAI_EVALS_CONFIG_PATH }}

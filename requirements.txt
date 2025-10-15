@@ -1,0 +1,6 @@
+azure-ai-evaluation
+azure-identity
+azure-ai-projects
+azure-ai-ml
+pandas
+pytest
