@@ -69,20 +69,13 @@ To run the unit tests for the evaluators:
 pytest tests/
 ```
 
-This will test the evaluator wrappers using the configured Azure OpenAI model.
-
-### 4. Run the Evaluation
-
-Execute the evaluation script:
+To run tests with verbose output and print statements (to see evaluation results):
 
 ```bash
-python evaluate.py
+pytest -s -v tests/
 ```
 
-This will:
-- Load evaluation data from `data/eval-input-complete.jsonl`
-- Run Coherence, Fluency, and QA evaluations on the first 10 data entries
-- Print the results to the console
+This will test the evaluator wrappers using the configured Azure OpenAI model and display detailed output including the evaluation results.
 
 ## Data Format
 

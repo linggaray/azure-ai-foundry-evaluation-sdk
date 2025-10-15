@@ -4,3 +4,4 @@ azure-ai-projects
 azure-ai-ml
 pandas
 pytest
+python-dotenv
