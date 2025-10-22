@@ -1,9 +1,10 @@
 name: Comprehensive Evaluation
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 16 * * *"   # 9:00 AM Arizona time
-    - cron: "0 4 * * *"    # 9:00 PM Arizona time
+  # Uncomment the schedule section below to enable automatic runs
+  # schedule:
+  #   - cron: "0 16 * * *"   # 9:00 AM Arizona time
+  #   - cron: "0 4 * * *"    # 9:00 PM Arizona time
   push:
     branches:
       - main
